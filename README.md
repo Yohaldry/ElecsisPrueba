@@ -5,4 +5,4 @@
 
 ![image](https://user-images.githubusercontent.com/87151125/176614099-7c3fe167-875c-4fb5-a1c4-c40d740ac18c.png)
 
-https://app.netlify.com/sites/curious-treacle-74126f/overview
+https://curious-treacle-74126f.netlify.app/
