@@ -8,13 +8,13 @@ import {
 } from '@mui/material'
 import React, { useState } from 'react'
 import useAuth from 'app/hooks/useAuth'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Box, styled, useTheme } from '@mui/system'
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator'
 import { Paragraph, Span } from 'app/components/Typography'
-
-
-
+import axios from 'axios'
+import { useEffect } from 'react'
+import Swal from 'sweetalert2'
 
 const FlexBox = styled(Box)(() => ({
     display: 'flex',
@@ -53,52 +53,84 @@ const StyledProgress = styled(CircularProgress)(() => ({
 }))
 
 const JwtLogin = () => {
-    
-    const navigate = useNavigate()
-    const [loading, setLoading] = useState(false)
-    const [userInfo, setUserInfo] = useState({
-        email: 'jason@ui-lib.com',
-        password: 'dummyPass',
-    })
-    const [message, setMessage] = useState('')
-    const { login } = useAuth()
-
-    const handleChange = ({ target: { name, value } }) => {
-        let temp = { ...userInfo }
-        temp[name] = value
-        setUserInfo(temp)
-    }
-
-    const { palette } = useTheme()
-    const textError = palette.error.main
-    const textPrimary = palette.primary.main
-
-    const handleFormSubmit = async (event) => {
-        setLoading(true)
-        try {
-            await login(userInfo.email, userInfo.password)
-            navigate('/')
-        } catch (e) {
-            console.log(e)
-            setMessage(e.message)
-            setLoading(false)
-        }
-    }
-
 
     const [usuarios, setUsuarios] = useState([])
     
  
     const urlLogin = `https://gorest.co.in/public/v2/users`
 
-    const obtenerDatos = async () => {
-        const data = await fetch(urlLogin)
-        const users = await data.json()
-        setUsuarios(users)
+
+    const [curre, setCurre] = useState({
+
+     
+        email: ''
         
+    })
+    
+
+    const handleChange = (e) => {
+
+        setCurre({
+            ...curre, 
+            [e.target.name]: e.target.value
+        })
+        
+        console.log(curre)
     }
 
+   
+
+     const obtenerDatos = async () => {
+         const data = await fetch(urlLogin)
+         const users = await data.json()
+         setUsuarios(users)
+         
+     }
+
+    const navigate = useNavigate()
+    const [loading, setLoading] = useState(false)
+    const [userInfo, setUserInfo] = useState({})
+    console.log(userInfo)
+    const [message, setMessage] = useState('')
+    const { login } = useAuth()
+
+ 
+
+    const { palette } = useTheme()
+    const textError = palette.error.main
+    const textPrimary = palette.primary.main
+
+
+
+    const handleFormSubmit = async () => {
     
+       
+        usuarios.find(U => {
+            
+            if(curre.email === U.email){
+                
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'Welcome',
+                    showConfirmButton: false,
+                    timer: 2500
+                  })
+
+                    navigate('/tableUsuarios')
+            }else{
+               console.log('No existe')
+            }
+          
+        } )
+      
+    }
+
+    useEffect(() => {
+        obtenerDatos()
+     
+    },[])
+
 
     return (
         <JWTRoot>
@@ -119,51 +151,15 @@ const JwtLogin = () => {
                                     sx={{ mb: 3, width: '100%' }}
                                     variant="outlined"
                                     size="small"
-                                    label="Email"
+                                    label="email"
                                     onChange={handleChange}
                                     type="email"
                                     name="email"
-                                    value={userInfo.email}
-                                    validators={['required', 'isEmail']}
-                                    errorMessages={[
-                                        'this field is required',
-                                        'email is not valid',
-                                    ]}
+                                    // value={userInfo.email}
+                                   
                                 />
-                                <TextValidator
-                                    sx={{ mb: '12px', width: '100%' }}
-                                    label="Password"
-                                    variant="outlined"
-                                    size="small"
-                                    onChange={handleChange}
-                                    name="password"
-                                    type="password"
-                                    value={userInfo.password}
-                                    validators={['required']}
-                                    errorMessages={['this field is required']}
-                                />
-                                <FormControlLabel
-                                    sx={{ mb: '12px', maxWidth: 288 }}
-                                    name="agreement"
-                                    onChange={handleChange}
-                                    control={
-                                        <Checkbox
-                                            size="small"
-                                            onChange={({
-                                                target: { checked },
-                                            }) =>
-                                                handleChange({
-                                                    target: {
-                                                        name: 'agreement',
-                                                        value: checked,
-                                                    },
-                                                })
-                                            }
-                                            checked={userInfo.agreement || true}
-                                        />
-                                    }
-                                    label="Remeber me"
-                                />
+                        
+                                
 
                                 {message && (
                                     <Paragraph sx={{ color: textError }}>
@@ -192,20 +188,13 @@ const JwtLogin = () => {
                                     <Button
                                         sx={{ textTransform: 'capitalize' }}
                                         onClick={() =>
-                                            navigate('/session/signup')
+                                            navigate('/register')
                                         }
                                     >
                                         Sign up
                                     </Button>
                                 </FlexBox>
-                                <Button
-                                    sx={{ color: textPrimary }}
-                                    onClick={() =>
-                                        navigate('/session/forgot-password')
-                                    }
-                                >
-                                    Forgot password?
-                                </Button>
+                              
                             </ValidatorForm>
                         </ContentBox>
                     </Grid>
