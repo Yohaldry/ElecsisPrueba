@@ -12,7 +12,7 @@ const sessionRoutes = [
         element: <JwtRegister />,
     },
     {
-        path: '/session/signin',
+        path: '/ElecsisPrueba',
         element: <JwtLogin />,
     },
     {
