@@ -25,14 +25,14 @@ export const AllPages = () => {
         ...sessionRoutes,
         {
             path: '/',
-            element: <Navigate to="/ElecsisPrueba/dashboard/default" />,
+            element: <Navigate to="/dashboard/default" />,
         },
         {
-            path: '/ElecsisPrueba/TableUsuarios',
+            path: '/TableUsuarios',
             element: <PantallaUsers />,
         },
         {
-            path: '/ElecsisPrueba/dashboard',
+            path: '/dashboard',
             element: <MatxLayout />,
         },
         {
